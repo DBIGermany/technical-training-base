@@ -1,4 +1,6 @@
-pragma solidity >=0.4.22 <0.6.0;
+// SPDX-License-Identifier: UNLICENSED
+
+pragma solidity >=0.4.22;
 
 contract Poll {
 
@@ -24,7 +26,7 @@ contract Poll {
     Proposal[] public proposals;
 
     // constructor function gets called when the contract is deployed
-    constructor() public {
+    constructor() {
         chairperson = msg.sender;
     }
     
