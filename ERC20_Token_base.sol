@@ -1,6 +1,6 @@
-pragma solidity ^0.5.0;
+// SPDX-License-Identifier: UNLICENSED
 
-// (c) BokkyPooBah / Bok Consulting Pty Ltd 2018. The MIT Licence.
+pragma solidity >=0.8.0;
 
 
 // Safe maths library
@@ -26,13 +26,13 @@ library SafeMath {
 
 // ERC Token Standard #20 Interface
 // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20.md
-contract ERC20Interface {
-    function totalSupply() public view returns (uint);
-    function balanceOf(address tokenOwner) public view returns (uint balance);
-    function allowance(address tokenOwner, address spender) public view returns (uint remaining);
-    function transfer(address to, uint tokens) public returns (bool success);
-    function approve(address spender, uint tokens) public returns (bool success);
-    function transferFrom(address from, address to, uint tokens) public returns (bool success);
+abstract contract ERC20Interface {
+    function totalSupply() public virtual view returns (uint);
+    function balanceOf(address tokenOwner) public virtual view returns (uint balance);
+    function allowance(address tokenOwner, address spender) public virtual view returns (uint remaining);
+    function transfer(address to, uint tokens) public virtual returns (bool success);
+    function approve(address spender, uint tokens) public virtual returns (bool success);
+    function transferFrom(address from, address to, uint tokens) public virtual returns (bool success);
 
     event Transfer(address indexed from, address indexed to, uint tokens);
     event Approval(address indexed tokenOwner, address indexed spender, uint tokens);
@@ -46,7 +46,7 @@ contract Owned {
 
     event OwnershipTransferred(address indexed _from, address indexed _to);
 
-    constructor() public {
+    constructor()  {
         owner = msg.sender;
     }
 
@@ -81,7 +81,7 @@ contract FixedSupplyToken is ERC20Interface, Owned {
     mapping(address => mapping(address => uint)) allowed;
 
     // Constructor
-    constructor() public {
+    constructor()  {
         symbol = "TTT";
         name = "Technical Training Token";
         _totalSupply = 1_000_000;
@@ -90,17 +90,17 @@ contract FixedSupplyToken is ERC20Interface, Owned {
     }
 
     // Total supply
-    function totalSupply() public view returns (uint) {
+    function totalSupply() public override view returns (uint) {
         return _totalSupply.sub(balances[address(0)]);
     }
 
     // Get the token balance for account `tokenOwner`
-    function balanceOf(address tokenOwner) public view returns (uint balance) {
+    function balanceOf(address tokenOwner) public override view returns (uint balance) {
         return balances[tokenOwner];
     }
 
     // Transfer the balance from token owner's account to `to` account
-    function transfer(address to, uint tokens) public returns (bool success) {
+    function transfer(address to, uint tokens) public override returns (bool success) {
         balances[msg.sender] = balances[msg.sender].sub(tokens);
         balances[to] = balances[to].add(tokens);
         emit Transfer(msg.sender, to, tokens);
@@ -109,24 +109,19 @@ contract FixedSupplyToken is ERC20Interface, Owned {
 
     // Token owner can approve for `spender` to transferFrom(...) `tokens`
     // from the token owner's account
-    function approve(address spender, uint tokens) public returns (bool success) {
+    function approve(address spender, uint tokens) public override returns (bool success) {
         return true;
     }
 
     // Transfer `tokens` from the `from` account to the `to` account
-    function transferFrom(address from, address to, uint tokens) public returns (bool success) {
+    function transferFrom(address from, address to, uint tokens) public override returns (bool success) {
         return true;
     }
 
     // Returns the amount of tokens approved by the owner that can be
     // transferred to the spender's account
-    function allowance(address tokenOwner, address spender) public view returns (uint remaining) {
+    function allowance(address tokenOwner, address spender) public override view returns (uint remaining) {
         return 0;
-    }
-
-    // Don't accept ETH
-    function () external payable {
-        revert();
     }
 
     // Owner can transfer out any accidentally sent ERC20 tokens
